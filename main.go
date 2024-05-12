@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -56,14 +55,15 @@ func main() {
 
 	app := fiber.New()
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173",
-		AllowHeaders: "Origin,Content-Type,Accept",
-	}))
+	//CORS Middleware
+	// app.Use(cors.New(cors.Config{
+	// 	AllowOrigins: "http://localhost:5173",
+	// 	AllowHeaders: "Origin,Content-Type,Accept",
+	// }))
 
 	app.Get("/api/todos", getTodos)
 	app.Post("/api/todos", createTodo)
-	app.Get("/api/todos/:id", getTodo)
+	// app.Get("/api/todos/:id", getTodo)
 	app.Patch("/api/todos/:id", updateTodo)
 	app.Delete("/api/todos/:id", deleteTodo)
 
@@ -111,17 +111,17 @@ func createTodo(c *fiber.Ctx) error {
 	return c.Status(201).JSON(todo)
 }
 
-func getTodo(c *fiber.Ctx) error {
-	id := c.Params("id")
-	var todo Todo
+// func getTodo(c *fiber.Ctx) error {
+// 	id := c.Params("id")
+// 	var todo Todo
 
-	result := db.First(&todo, id)
-	if result.Error != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "Invalid todo ID"})
-	}
+// 	result := db.First(&todo, id)
+// 	if result.Error != nil {
+// 		return c.Status(404).JSON(fiber.Map{"error": "Invalid todo ID"})
+// 	}
 
-	return c.JSON(todo)
-}
+// 	return c.JSON(todo)
+// }
 
 func updateTodo(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -132,8 +132,8 @@ func updateTodo(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": "Invalid todo ID"})
 	}
 
-	// todo.Completed = true
-	todo.Completed = !todo.Completed
+	todo.Completed = true
+	// todo.Completed = !todo.Completed
 
 	result = db.Save(&todo)
 	if result.Error != nil {
